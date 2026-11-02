@@ -1,9 +1,13 @@
 package com.example.sem5;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,8 +15,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,9 +32,36 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     EditText etName, etAge, etAddress, etPhone;
+    TextView tvAirplaneModeBanner;
     RadioGroup rgGender;
     CheckBox cbAndroid, cbJava, cbKotlin, cbXML, cbFirebase;
-    Button btnSubmit, btnClear, btnGithub, btnCall, btnMap, btnFile;
+    Button btnSubmit, btnClear, btnGithub, btnCall, btnMap, btnFile, btnBattery;
+    private boolean isReceiverRegistered = false;
+    private boolean isAirplaneReceiverRegistered = false;
+
+    private final BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+                int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+                int batteryPct = BatteryHelper.calculatePercentage(level, scale);
+                if (batteryPct >= 0) {
+                    Toast.makeText(context, "Battery Level: " + batteryPct + "%", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+
+    private final BroadcastReceiver airplaneModeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && Intent.ACTION_AIRPLANE_MODE_CHANGED.equals(intent.getAction())) {
+                boolean state = intent.getBooleanExtra("state", AirplaneModeHelper.isAirplaneModeOn(context));
+                updateAirplaneModeBanner(state);
+            }
+        }
+    };
 
     private static final int REQUEST_CALL_PERMISSION = 1;
 
@@ -39,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         setTitle("Student Form");
 
         etName = findViewById(R.id.etName);
+        tvAirplaneModeBanner = findViewById(R.id.tvAirplaneModeBanner);
+        updateAirplaneModeBanner(AirplaneModeHelper.isAirplaneModeOn(this));
         etAge = findViewById(R.id.etAge);
         etAddress = findViewById(R.id.etAddress);
         etPhone = findViewById(R.id.etPhone);
@@ -54,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         btnCall = findViewById(R.id.btnCall);
         btnMap = findViewById(R.id.btnMap);
         btnFile = findViewById(R.id.btnFile);
+        btnBattery = findViewById(R.id.btnBattery);
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +132,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openFileManager();
+            }
+        });
+
+        btnBattery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBatteryLevel();
             }
         });
     }
@@ -228,5 +272,58 @@ public class MainActivity extends AppCompatActivity {
         cbKotlin.setChecked(false);
         cbXML.setChecked(false);
         cbFirebase.setChecked(false);
+    }
+
+    private void showBatteryLevel() {
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = registerReceiver(null, ifilter);
+        if (batteryStatus != null) {
+            int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            int batteryPct = BatteryHelper.calculatePercentage(level, scale);
+            if (batteryPct >= 0) {
+                Toast.makeText(this, "Battery Level: " + batteryPct + "%", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Toast.makeText(this, "Unable to read battery level", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateAirplaneModeBanner(boolean isActive) {
+        if (tvAirplaneModeBanner != null) {
+            tvAirplaneModeBanner.setText(AirplaneModeHelper.getStatusText(isActive));
+            GradientDrawable drawable = new GradientDrawable();
+            drawable.setCornerRadius(16f);
+            drawable.setColor(AirplaneModeHelper.getStatusColor(isActive));
+            tvAirplaneModeBanner.setBackground(drawable);
+            tvAirplaneModeBanner.setTextColor(Color.WHITE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isReceiverRegistered) {
+            registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            isReceiverRegistered = true;
+        }
+        if (!isAirplaneReceiverRegistered) {
+            registerReceiver(airplaneModeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
+            isAirplaneReceiverRegistered = true;
+        }
+        updateAirplaneModeBanner(AirplaneModeHelper.isAirplaneModeOn(this));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isReceiverRegistered) {
+            unregisterReceiver(batteryReceiver);
+            isReceiverRegistered = false;
+        }
+        if (isAirplaneReceiverRegistered) {
+            unregisterReceiver(airplaneModeReceiver);
+            isAirplaneReceiverRegistered = false;
+        }
     }
 }
