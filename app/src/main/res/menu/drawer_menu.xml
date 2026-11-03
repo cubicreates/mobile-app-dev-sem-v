@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Student Form" />
+        <item
+            android:id="@+id/nav_github"
+            android:icon="@android:drawable/ic_menu_view"
+            android:title="Open GitHub" />
+        <item
+            android:id="@+id/nav_map"
+            android:icon="@android:drawable/ic_dialog_map"
+            android:title="Open Maps (KRMU)" />
+        <item
+            android:id="@+id/nav_file"
+            android:icon="@android:drawable/ic_menu_save"
+            android:title="File Manager" />
+        <item
+            android:id="@+id/nav_battery"
+            android:icon="@android:drawable/ic_lock_idle_charging"
+            android:title="Check Battery" />
+        <item
+            android:id="@+id/nav_clear"
+            android:icon="@android:drawable/ic_menu_delete"
+            android:title="Clear Form" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_call"
+                android:icon="@android:drawable/ic_menu_call"
+                android:title="Call Number" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@android:drawable/ic_dialog_info"
+                android:title="About App" />
+        </menu>
+    </item>
+
+</menu>
+

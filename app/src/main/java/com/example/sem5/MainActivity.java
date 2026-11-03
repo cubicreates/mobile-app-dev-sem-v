@@ -22,15 +22,24 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    ActionBarDrawerToggle actionBarDrawerToggle;
     EditText etName, etAge, etAddress, etPhone;
     TextView tvAirplaneModeBanner;
     RadioGroup rgGender;
@@ -71,6 +80,61 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setTitle("Student Form");
+
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                R.string.nav_open,
+                R.string.nav_close
+        );
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.nav_home) {
+                    Toast.makeText(MainActivity.this, "Student Form", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_github) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.github.com/cubicreates"));
+                    startActivity(intent);
+                } else if (id == R.id.nav_map) {
+                    openMap();
+                } else if (id == R.id.nav_file) {
+                    openFileManager();
+                } else if (id == R.id.nav_battery) {
+                    showBatteryLevel();
+                } else if (id == R.id.nav_clear) {
+                    clearForm();
+                    Toast.makeText(MainActivity.this, "Form cleared", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_call) {
+                    makePhoneCall();
+                } else if (id == R.id.nav_about) {
+                    Toast.makeText(MainActivity.this, "Sem5 App - Navigation Drawer Demo", Toast.LENGTH_SHORT).show();
+                }
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                    setEnabled(true);
+                }
+            }
+        });
 
         etName = findViewById(R.id.etName);
         tvAirplaneModeBanner = findViewById(R.id.tvAirplaneModeBanner);
@@ -200,6 +264,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (actionBarDrawerToggle != null && actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         int id = item.getItemId();
         if (id == R.id.menu_adit) {
             Toast.makeText(this, "adit selected", Toast.LENGTH_SHORT).show();
