@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -14,16 +12,34 @@
         android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Sem5">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewJavaClass" />
+
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".RecyclerViewActivity" />
+        <activity android:name=".LifecycleActivity" />
+        <activity android:name=".ExplicitIntentActivity" />
+        <activity android:name=".SecondActivity" />
+        <activity android:name=".ImplicitIntentActivity" />
+        <activity android:name=".AddFragmentActivity" />
+        <activity android:name=".ReplaceFragmentActivity" />
+        <activity android:name=".PassDataFragmentActivity" />
+        <activity android:name=".OptionMenuActivity" />
+        <activity android:name=".ContextPopupMenuActivity" />
+        <activity android:name=".TabViewPagerActivity" />
+        <activity android:name=".BroadcastActivity" />
+        <activity android:name=".NotificationActivity" />
+        <activity android:name=".MusicServiceActivity" />
+
+        <service android:name=".MusicService" />
+
     </application>
 
 </manifest>
