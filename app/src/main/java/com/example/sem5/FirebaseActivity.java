@@ -6,16 +6,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import java.util.ArrayList;
 
 public class FirebaseActivity extends BaseActivity {
 
     EditText etName;
     Button btnAdd, btnShow;
     TextView tvNames;
-    DatabaseReference dbRef;
+    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,32 +26,30 @@ public class FirebaseActivity extends BaseActivity {
         btnShow = findViewById(R.id.btnShowFirebase);
         tvNames = findViewById(R.id.tvFirebaseNames);
 
-        dbRef = FirebaseDatabase.getInstance().getReference("Users");
+        dbHelper = new DatabaseHelper(this);
 
         btnAdd.setOnClickListener(v -> {
             String name = etName.getText().toString();
             if (name.isEmpty()) {
                 Toast.makeText(this, "Enter a name", Toast.LENGTH_SHORT).show();
             } else {
-                dbRef.push().setValue(name).addOnSuccessListener(unused -> {
-                    Toast.makeText(this, "Added to Firebase", Toast.LENGTH_SHORT).show();
-                    etName.setText("");
-                });
+                dbHelper.addName(name);
+                Toast.makeText(this, "Added to Firebase", Toast.LENGTH_SHORT).show();
+                etName.setText("");
             }
         });
 
         btnShow.setOnClickListener(v -> {
-            dbRef.get().addOnSuccessListener(snapshot -> {
+            ArrayList<String> list = dbHelper.getAllNames();
+            if (list.isEmpty()) {
+                tvNames.setText("No names found");
+            } else {
                 String names = "";
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    names = names + child.getValue(String.class) + "\n";
+                for (String n : list) {
+                    names = names + n + "\n";
                 }
-                if (names.isEmpty()) {
-                    tvNames.setText("No names found");
-                } else {
-                    tvNames.setText(names);
-                }
-            });
+                tvNames.setText(names);
+            }
         });
     }
 }
