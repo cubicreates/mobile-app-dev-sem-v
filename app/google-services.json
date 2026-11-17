@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1037765329251",
+    "project_id": "sem5androidapp",
+    "storage_bucket": "sem5androidapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037765329251:android:57e003599ba1d4d97bd356",
+        "android_client_info": {
+          "package_name": "com.example.sem5"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPgw1CqONAj6T93fCJk4-HjZRh3QTFC8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -61,6 +61,8 @@ public class BaseActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NotificationActivity.class));
             } else if (id == R.id.nav_music_service) {
                 startActivity(new Intent(this, MusicServiceActivity.class));
+            } else if (id == R.id.nav_firebase) {
+                startActivity(new Intent(this, FirebaseActivity.class));
             }
             drawerLayout.closeDrawers();
             return true;

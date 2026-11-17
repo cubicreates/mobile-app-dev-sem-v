@@ -46,6 +46,9 @@
     <item
         android:id="@+id/nav_music_service"
         android:title="15. Music Service" />
+    <item
+        android:id="@+id/nav_firebase"
+        android:title="16. Firebase Database" />
 
 </menu>
 

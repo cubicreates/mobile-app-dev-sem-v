@@ -37,6 +37,7 @@
         <activity android:name=".BroadcastActivity" />
         <activity android:name=".NotificationActivity" />
         <activity android:name=".MusicServiceActivity" />
+        <activity android:name=".FirebaseActivity" />
 
         <service android:name=".MusicService" />
 
